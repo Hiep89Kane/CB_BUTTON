@@ -16,7 +16,7 @@
 * 							|																				     |
 * 							|.....(5)____________________________________________________ LOW (hold continues)___|
 *
-* state:			 --0--->1----> 2<----------3--------->4----------------------------------------------------->9<----0---
+* status:			 --0--->1----> 2<----------3--------->4----------------------------------------------------->9<----0---
 *					   null |init  |	 wait hold (1s)   |  isHold  				^				   			 |
 *					   			   ^ 											    ^							 ^
 * user event:					 press                	 	 			(isHold + _timeHold)			hold release
@@ -27,7 +27,7 @@
 * 							|.....(5)__________|
 *
 *			    -------0--->1----->2<----3----><---5--><----------------7--------------->0---------------->
-* state:		      null  | init | wait hold |release|     wait multi-click (0.5s)     | null
+* status:		      null  | init | wait hold |release|     wait multi-click (0.5s)     | null
 *                                  ^				   ^								 ^
 * user event:    				 press               click							timeout 0.5s
 *												(_multiClick++)					(_multiClick == 0)
@@ -37,7 +37,7 @@
 * 							|				    |                      		  |					 	|
 * 							|.....(5)___________|					          |........(5)__________|
 *
-* state			-------0--->1----->2<----3---->----5--->6<--------7----------->----8---->2<----3---->---5--->
+* status		-------0--->1----->2<----3---->----5--->6<--------7----------->----8---->2<----3---->---5--->
 *					  null  |init  | wait hold |release |   wait multi-click  |multi init|			   		|
 *					               ^					^								 ^					|
 * user event:					 press				 click  						   press				|
@@ -50,6 +50,19 @@
 *										(... )
 *										(_multiClick=n -> n click)
 */
+typedef enum
+{
+	_BTN_null = 0,
+	_BTN_init = 1,
+	_BTN_isPress = 2, /*(user event)*/
+	_BTN_wait_hold = 3,
+	_BTN_isHold = 4, /*(user event) && (_timeHold==n_second)*/
+	_BTN_isRelease = 5,
+	_BTN_isClick = 6,			 /*(user event) && (_multiClick==user_times)*/
+	_BTN_wait_clrMultiClick = 7, // wait timeout clear multi-click
+	_BTN_multi_init = 8,		 // begin the multi-click
+	_BTN_hold_pass = 9
+} BTN_Stt_t;
 typedef enum
 {
 	BUTTON_UNKNOWN = 0,

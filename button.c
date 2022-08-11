@@ -1,4 +1,4 @@
-#include <button.h>
+#include "button.h"
 #include "timer.h"
 
 void btn_progress_loop(button_t *btn, uint8_t _HW_PinStt)
@@ -55,9 +55,7 @@ void btn_progress_loop(button_t *btn, uint8_t _HW_PinStt)
 
 			// callback Hold on
 			if (btn->cb_Hold)
-			{
 				btn->cb_Hold(btn->timeHold * 10);
-			}
 
 			break;
 

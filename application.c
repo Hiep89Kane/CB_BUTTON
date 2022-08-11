@@ -8,9 +8,9 @@
 
 typedef uint8_t (*__ReadPin)(void);
 
-uint8_t BTN0_Stt() { return (uint8_t)HAL_GPIO_ReadPin(IN_BUTTON_GPIO_Port, IN_BUTTON_Pin); }
-uint8_t BTN1_Stt() { return (uint8_t)HAL_GPIO_ReadPin(IN_SAFETY_GPIO_Port, IN_SAFETY_Pin); }
-uint8_t BTN2_Stt() { return (uint8_t)HAL_GPIO_ReadPin(IN_JETSW_GPIO_Port, IN_JETSW_Pin); }
+uint8_t BTN0_Stt() { return (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1); }
+uint8_t BTN1_Stt() { return (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5); }
+uint8_t BTN2_Stt() { return (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); }
 
 button_t BUTTON_arr[APP_BUTTON_NUM];
 __ReadPin pinStt_arr[APP_BUTTON_NUM] = {BTN0_Stt, BTN1_Stt, BTN2_Stt};
@@ -60,6 +60,7 @@ void userButton0_multiClick(uint8_t numClick)
 
 void userButton0_eventHold(uint32_t interval_ms)
 {
+	//hold at 5 seconds
 	if (interval_ms == 5000)
 	{
 		printf("\n\r Btn0 hold %ums", interval_ms);
