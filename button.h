@@ -52,19 +52,6 @@
 */
 typedef enum
 {
-	_BTN_null = 0,
-	_BTN_init = 1,
-	_BTN_isPress = 2, /*(user event)*/
-	_BTN_wait_hold = 3,
-	_BTN_isHold = 4, /*(user event) && (_timeHold==n_second)*/
-	_BTN_isRelease = 5,
-	_BTN_isClick = 6,			 /*(user event) && (_multiClick==user_times)*/
-	_BTN_wait_clrMultiClick = 7, // wait timeout clear multi-click
-	_BTN_multi_init = 8,		 // begin the multi-click
-	_BTN_hold_pass = 9
-} BTN_Stt_t;
-typedef enum
-{
 	BUTTON_UNKNOWN = 0,
 	BUTTON_PRESS,
 	BUTTON_RELEASE,
