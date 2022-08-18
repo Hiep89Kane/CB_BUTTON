@@ -50,56 +50,67 @@
 *										(... )
 *										(_multiClick=n -> n click)
 */
+typedef enum {
+	_BUTTON_FUNC_EVENT,
+	_BUTTON_FUNC_MULCLICK,
+	_BUTTON_FUNC_HOLD
+}button_functionCb_t;
+
 typedef enum
 {
-	BUTTON_UNKNOWN = 0,
+	BUTTON_UNKNOWN=0,
 	BUTTON_PRESS,
 	BUTTON_RELEASE,
 	BUTTON_ONECLICK,
 	BUTTON_HOLD_PRESS,
 	BUTTON_HOLD_RELEASE,
-} EventButton_t;
+}EventButton_t;
 
-typedef void (*button_cbEvent)(EventButton_t event);
-typedef void (*button_cbEventMultiClick)(uint8_t cntClick);
-typedef void (*button_cbEventHold)(uint32_t interval_ms);
+typedef union {
+	EventButton_t event;
+	uint8_t numClick;
+	uint32_t holdInterval_ms;
+}button_typeArg_t;
+
+typedef void (*button_cb)(button_functionCb_t typeFunction, button_typeArg_t agr);
+
+typedef uint8_t (*__InputReadPin)(void);
 
 typedef enum
 {
-	_BTN_null = 0,
-	_BTN_init = 1,
-	_BTN_isPress = 2, /*(user event)*/
-	_BTN_wait_hold = 3,
-	_BTN_isHold = 4, /*(user event) && (_timeHold==n_second)*/
-	_BTN_isRelease = 5,
-	_BTN_isClick = 6,			 /*(user event) && (_multiClick==user_times)*/
-	_BTN_wait_clrMultiClick = 7, // wait timeout clear multi-click
-	_BTN_multi_init = 8,		 // begin the multi-click
-	_BTN_hold_pass = 9
-} BTN_Stt_t;
+	  _BTN_null=0,
+	  _BTN_init=1,
+	  _BTN_isPress=2,   		/*(user event)*/
+	  _BTN_wait_hold=3,
+	  _BTN_isHold=4, 			/*(user event) && (_timeHold==n_second)*/
+	  _BTN_isRelease=5,
+	  _BTN_isClick=6,	    	/*(user event) && (_multiClick==user_times)*/
+	  _BTN_wait_clrMultiClick=7, //wait timeout clear multi-click
+	  _BTN_multi_init=8,		//begin the multi-click
+	  _BTN_hold_pass=9
+}BTN_Stt_t;
 
-typedef struct
-{
-	timer_t _timeout;
-	uint32_t _timeBeginHold;
-} private_process_t;
 
-typedef struct
-{
-	BTN_Stt_t state;
-	uint8_t multiClick;
-	uint32_t timeHold;
+typedef struct {
+	TIMER_t 	_timeout;
+	uint32_t 	_timeBeginHold;
+}private_process_t;
 
-	// CallBack functions
-	button_cbEvent cb_Event;
-	button_cbEventMultiClick cb_MultiClick;
-	button_cbEventHold cb_Hold;
+typedef struct{
+	BTN_Stt_t	state;
+	uint8_t		multiClick;
+	uint32_t 	timeHold;
 
-	// PRIVATE
+	//CallBack functions
+	button_cb 	cb_function;
+	//CallBack input pinStt
+	__InputReadPin	pinStt;
+
+	//PRIVATE
 	private_process_t process;
 
-} button_t;
+}button_t;
 
-void btn_progress_loop(button_t *btn, uint8_t _HW_PinStt);
+void btn_progress_loop(button_t *btn);
 
 #endif /* SRC_BUTTON_H_ */

@@ -5,68 +5,36 @@
 #include "printf.h"
 
 #define APP_BUTTON_NUM 3
-
-typedef uint8_t (*__ReadPin)(void);
-
 uint8_t BTN0_Stt() { return (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1); }
 uint8_t BTN1_Stt() { return (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5); }
 uint8_t BTN2_Stt() { return (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); }
 
 button_t BUTTON_arr[APP_BUTTON_NUM];
-__ReadPin pinStt_arr[APP_BUTTON_NUM] = {BTN0_Stt, BTN1_Stt, BTN2_Stt};
+void btn0_cb_Handle(button_functionCb_t typeFunction, button_typeArg_t agr){
 
-void userButton0_event(EventButton_t event)
-{
+	switch(typeFunction){
+		case _BUTTON_FUNC_EVENT:
+			if(BUTTON_ONECLICK){
+				debug_msg("\n\r Btn0 click");
+			}
+			break;
 
-	switch (event)
-	{
-	case BUTTON_PRESS:
-		printf("\n\r Btn0 Press");
-		break;
-	case BUTTON_RELEASE:
-		printf("\n\r Btn0 release");
-		break;
-	case BUTTON_ONECLICK:
-		printf("\n\r Btn0 click");
-		break;
-	case BUTTON_HOLD_PRESS:
-		printf("\n\r Btn0 hold start");
-		break;
-	case BUTTON_HOLD_RELEASE:
-		printf("\n\r Btn0 hold release");
-		break;
-	default:
-		break;
+		case _BUTTON_FUNC_MULCLICK:
+			if(agr.numClick==2)
+				debug_msg("\n\r Btn0 DoubleClick");
+			if(agr.numClick==3)
+				debug_msg("\n\r Btn0 TripleClick");
+			break;
+
+		case _BUTTON_FUNC_HOLD:
+			if(agr.holdInterval_ms == 5000){
+				debug_msg("\n\r Btn0 hold %ums", agr);
+			}
+			break;
+		default:break;
 	}
+
 }
-
-void userButton0_multiClick(uint8_t numClick)
-{
-	if (numClick == 2)
-	{
-		printf("\n\r Btn0 double click");
-	}
-
-	if (numClick == 3)
-	{
-		printf("\n\r Btn0 triple click");
-	}
-
-	if (numClick == 5)
-	{
-		printf("\n\r Btn0 click %u times", numClick);
-	}
-}
-
-void userButton0_eventHold(uint32_t interval_ms)
-{
-	//hold at 5 seconds
-	if (interval_ms == 5000)
-	{
-		printf("\n\r Btn0 hold %ums", interval_ms);
-	}
-}
-
 
 /**
  * @brief appButtonsProgress_loop :  excuse all Button struct , put in while(1)
@@ -78,7 +46,7 @@ void appButtonsProgress_loop()
 
 	for (uint8_t i = 0; i < APP_BUTTON_NUM; i++)
 	{
-		btn_progress_loop(&BUTTON_arr[i], !pinStt_arr[i]());
+		btn_progress_loop(&BUTTON_arr[i]);
 	}
 }
 
@@ -89,7 +57,11 @@ void appButtonsProgress_loop()
  */
 void appButtonsCallBack_init()
 {
+	//add the PinStt of Hardware
+	BUTTON_arr[0].pinStt = &BTN0_Stt;
+	BUTTON_arr[1].pinStt = &BTN1_Stt;
+	BUTTON_arr[2].pinStt = &BTN2_Stt;
+	
+	//init callback of event button0
 	BUTTON_arr[0].cb_Event = &userButton0_event;
-	BUTTON_arr[0].cb_MultiClick = &userButton0_multiClick;
-	BUTTON_arr[0].cb_Hold = &userButton0_eventHold;
 }
