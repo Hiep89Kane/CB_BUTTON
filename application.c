@@ -13,10 +13,23 @@ button_t BUTTON_arr[APP_BUTTON_NUM];
 void btn0_cb_Handle(button_functionCb_t typeFunction, button_typeArg_t agr){
 
 	switch(typeFunction){
-		case _BUTTON_FUNC_EVENT:
-			if(BUTTON_ONECLICK){
-				debug_msg("\n\r Btn0 click");
+		case _BUTTON_FUNC_EVENT:		
+			if(agr.event == BUTTON_PRESS){
+				debug_msg("\n\r Btn0 press");
 			}
+			
+			if(agr.event == BUTTON_RELEASE){
+				debug_msg("\n\r Btn0 press");
+			}
+			
+			if(agr.event == BUTTON_ONECLICK){
+				debug_msg("\n\r Btn0 a click");
+			}
+			
+			if(agr.event == BUTTON_HOLD_RELEASE){
+				debug_msg("\n\r Btn0 aldready holded and release");
+			}			
+			
 			break;
 
 		case _BUTTON_FUNC_MULCLICK:
@@ -27,9 +40,15 @@ void btn0_cb_Handle(button_functionCb_t typeFunction, button_typeArg_t agr){
 			break;
 
 		case _BUTTON_FUNC_HOLD:
+			if(agr.holdInterval_ms == 3000/*3000ms*/){
+				debug_msg("\n\r Btn0 hold %ums", agr);
+			}		
 			if(agr.holdInterval_ms == 5000){
 				debug_msg("\n\r Btn0 hold %ums", agr);
 			}
+			if(agr.holdInterval_ms == 10000){
+				debug_msg("\n\r Btn0 hold %ums", agr);
+			}			
 			break;
 		default:break;
 	}
